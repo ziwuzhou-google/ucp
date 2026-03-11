@@ -143,7 +143,8 @@ Businesses can follow standard advertisement mechanism to advertise loyalty supp
           "conditions": [
             {
               "id": "CON_001",
-              "description": "Free to join"
+              "description": "Free to join",
+              "condition_type": "free"
             }
           ],
           "links": [
@@ -180,7 +181,8 @@ Businesses can follow standard advertisement mechanism to advertise loyalty supp
           "enrollment_conditions": [
             {
               "id": "CON_002",
-              "description": "$99/yr membership fee"
+              "description": "$99/yr membership fee",
+              "condition_type": "fee"
             }
           ],
           "links": [
