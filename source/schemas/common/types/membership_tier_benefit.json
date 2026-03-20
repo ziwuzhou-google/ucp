@@ -19,9 +19,8 @@
       "description": "Detailed complete explanation of the benefit (e.g. “Complimentary standard shipping on all orders”)."
     },
      "applies_on": {
-      "type": "array",
-      "items": { "type": "string" },
-      "description": "JSONPaths to the eligible benefit target represented by a discount (e.g. `$.discounts.applied[0]`)."
+      "type": "string",
+      "description": "JSONPath to the eligible benefit target represented by a discount (e.g. `$.discounts.applied[0]`)."
     }
   }
 }

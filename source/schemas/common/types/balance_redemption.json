@@ -12,9 +12,8 @@
       "description": "The amount of available balance to be redeemed."
     },
     "applies_on": {
-      "type": "array",
-      "items": { "type": "string" },
-      "description": "JSONPaths to the discount target representing the redemption (e.g. `$.discounts.applied[0]`).",
+      "type": "string",
+      "description": "JSONPath to the discount target representing the redemption (e.g. `$.discounts.applied[0]`).",
       "ucp_request": "omit"
     }
   }

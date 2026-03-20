@@ -4,6 +4,7 @@
   "title": "Loyalty",
   "description": "Container for loyalty memberships info.",
   "type": "object",
+  "required": ["memberships"],
   "properties": {
     "memberships": {
       "type": "array",

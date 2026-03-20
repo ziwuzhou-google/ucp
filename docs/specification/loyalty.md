@@ -116,115 +116,266 @@ Businesses can follow standard advertisement mechanism to advertise loyalty supp
 
 {{ schema_fields('types/balance_redemption', 'loyalty') }}
 
-### Example
+## Example
 
-```json
-{
-  "memberships": [
+### Membership sign-up
+
+Buyer wishes to sign up to be a GOLD tier member of the loyalty program offered by the business.
+
+=== "Request"
+
+    ```json
     {
-      "id": "membership_1",
-      "member_id": "member_id_1",
-      "name": "My Loyalty Program",
-      "enrollment_date": "2022-11-12T00:00:00Z",
-      "last_activity_date": "2026-01-12T00:00:00Z",
-      "end_date": "2036-01-12T00:00:00Z",
-      "tiers": [
+      "loyalty": {
+        "memberships": [
+          {
+            "id": "membership_1",
+            "member_id": "member_id_1"
+          }
+        ],
+        "activated_memberships": ["membership_1"]
+      }
+    }
+    ```
+
+=== "Response"
+
+    ```json
+    {
+      "memberships": [
         {
-          "id": "tier_1",
-          "name": "GOLD",
-          "level": 1,
-          "benefits": [
+          "id": "membership_1",
+          "member_id": "member_id_1",
+          "name": "My Loyalty Program",
+          "enrollment_date": "2026-03-20T00:00:00Z",
+          "last_activity_date": "2026-03-20T00:00:00Z",
+          "tiers": [
             {
-              "id": "BEN_001",
-              "title": "24-hour Early access",
-              "description": "24-hour early access to seasonal sales"
+              "id": "tier_1",
+              "name": "GOLD",
+              "level": 1,
+              "benefits": [
+                {
+                  "id": "BEN_001",
+                  "title": "24-hour Early access",
+                  "description": "24-hour early access to seasonal sales"
+                }
+              ],
+              "conditions": [
+                {
+                  "id": "CON_001",
+                  "description": "Free to join",
+                  "condition_type": "free"
+                }
+              ],
+              "links": [
+                {
+                  "type": "terms_of_service",
+                  "url": "loyalty.com/terms",
+                  "title": "Sign-up Terms"
+                }
+              ]
             }
           ],
-          "conditions": [
+          "activated_tiers": ["tier_1"],
+          "rewards": [
             {
-              "id": "CON_001",
-              "description": "Free to join",
-              "condition_type": "free"
-            }
-          ],
-          "links": [
-            {
-              "type": "terms_of_service",
-              "url": "loyalty.com/terms",
-              "title": "Sign-up Terms"
-            }
-          ]
-        },
-        {
-          "id": "tier_2",
-          "name": "PLATINUM",
-          "level": 2,
-          "benefits": [
-            {
-              "id": "BEN_001",
-              "title": "Free shipping",
-              "description": "Complimentary standard shipping on all orders",
-              "applies_on": ["$.discounts.applied[0]"]
-            },
-            {
-              "id": "BEN_002",
-              "title": "48-hour Early access",
-              "description": "48-hour early access to seasonal sales"
-            },
-            {
-              "id": "BEN_003",
-              "title": "Member discount",
-              "description": "Members get $5 off",
-              "applies_on": ["$.discounts.applied[1]"]
-            }
-          ],
-          "enrollment_conditions": [
-            {
-              "id": "CON_002",
-              "description": "$99/yr membership fee",
-              "condition_type": "fee"
-            }
-          ],
-          "links": [
-            {
-              "type": "terms_of_service",
-              "url": "loyalty.com/terms",
-              "title": "Sign-up Terms"
+              "currency": {
+                "name": "LoyaltyStars",
+                "code": "LST",
+              },
+              "balance": {
+                "available": 0
+              }
             }
           ]
         }
       ],
-      "activated_tiers": ["tier_1"],
-      "rewards": [
+      "activated_memberships": ["membership_1"]
+    }
+    ```
+
+### Point redemption
+
+Redeem loyalty point balance for a discount that leads to reduction of total cost.
+
+=== "Request"
+
+    ```json
+    {
+      "context": {
+        "eligibility": ["com.example.loyalty_tier_1"]
+      },
+      "line_items": [
         {
-          "currency": {
-            "name": "LoyaltyStars",
-            "code": "LST",
-          },
-          "balance": {
-            "available": 4500,
-            "pending": 250,
-            "lifetime_earned": 25000,
-            "lifetime_redeemed": 1000,
-            "expiring": [
+          "item": {
+            "id": "prod_shirt",
+            "quantity": 2,
+            "price": 2500
+          }
+        }
+      ],
+      "loyalty": {
+        "memberships": [
+          {
+            "id": "membership_1",
+            "member_id": "member_id_1",
+            "rewards": [
               {
-                "amount": 500,
-                "expiry_date": "2026-12-31T23:59:59Z",
-                "reason": "ANNUAL_EXPIRATION"
+                "currency": {
+                  "code": "LST"
+                },
+                "redemption": {
+                  "amount": 100
+                }
               }
             ]
-          },
-          "redemption": {
-            "amount": 100,
-            "applies_on": ["$.discounts.applied[0]"]
+          }
+        ]
+      }
+    }
+    ```
+=== "Response"
+
+    ```json
+    {
+      "discounts": {
+        "applied": [
+          {
+            "title": "Point Redemption",
+            "amount": 250,
+            "automatic": true,
+            "provisional": true,
+            "eligibility": "com.example.loyalty_tier_1",
+            "priority": 1,
+            "method": "each",
+            "allocations": [
+              {"path": "$.line_items[0]", "amount": 250}
+            ]
+          }
+        ]
+      },
+      "loyalty": {
+        "memberships": [
+          {
+            "id": "membership_1",
+            "member_id": "member_id_1",
+            "name": "My Loyalty Program",
+            "tiers": [
+              {
+                "id": "tier_1",
+                "name": "GOLD",
+                "level": 1,
+                "provisional": true,
+                "eligibility": "com.example.loyalty_tier_1",
+              }
+            ],
+            "activated_tiers": ["tier_1"],
+            "rewards": [
+              {
+                "currency": {
+                  "name": "LoyaltyStars",
+                  "code": "LST"
+                },
+                "balance": {
+                  "available": 4500
+                },
+                "redemption": {
+                  "amount": 100,
+                  "applies_on": "$.discounts.applied[0]"
+                }
+              }
+            ]
+          }
+        ],
+        "activated_memberships": ["membership_1"]
+      },
+      "totals": [
+        {"type": "subtotal", "display_text": "Subtotal", "amount": 5000},
+        {"type": "items_discount", "display_text": "Point Redemption", "amount": -250},
+        {"type": "total", "display_text": "Total", "amount": 4750}
+      ]
+    }
+    ```
+
+### Member pricing
+
+Buyer, as a loyalty member, receives special lower price on eligible item.
+
+=== "Request"
+
+    ```json
+    {
+      "context": {
+        "eligibility": ["com.example.loyalty_tier_1"]
+      },
+      "line_items": [
+        {
+          "item": {
+            "id": "prod_shirt",
+            "quantity": 2,
+            "price": 2000
           }
         }
       ]
     }
-  ],
-  "activated_memberships": ["membership_1"]
-}
-```
+    ```
+
+=== "Response"
+
+    ```json
+    {
+      "discounts": {
+        "applied": [
+          {
+            "title": "Member discount",
+            "amount": 250,
+            "automatic": true,
+            "provisional": true,
+            "eligibility": "com.example.loyalty_tier_1",
+            "priority": 1,
+            "method": "each",
+            "allocations": [
+              {"path": "$.line_items[0]", "amount": 250}
+            ]
+          }
+        ]
+      },
+      "loyalty": {
+        "memberships": [
+          {
+            "id": "membership_1",
+            "member_id": "member_id_1",
+            "name": "My Loyalty Program",
+            "tiers": [
+              {
+                "id": "tier_1",
+                "name": "GOLD",
+                "level": 1,
+                "benefits": [
+                  {
+                    "id": "BEN_001",
+                    "title": "Member discount",
+                    "description": "Members get $2.5 off",
+                    "applies_on": "$.discounts.applied[0]"
+                  }
+                ],
+                "provisional": true,
+                "eligibility": "com.example.loyalty_tier_1",
+              }
+            ],
+            "activated_tiers": ["tier_1"]
+          }
+        ],
+        "activated_memberships": ["membership_1"]
+      },
+      "totals": [
+        {"type": "subtotal", "display_text": "Subtotal", "amount": 5000},
+        {"type": "items_discount", "display_text": "Point Redemption", "amount": -250},
+        {"type": "total", "display_text": "Total", "amount": 4750}
+      ]
+    }
+    ```
 
 ## Behavior and Expectations
 
