@@ -10,11 +10,6 @@
       "type": "array",
       "items": { "$ref": "loyalty_membership.json" },
       "description": "List of memberships that the business offers or associated with."
-    },
-    "activated_memberships": {
-      "type": "array",
-      "items": { "type": "string" },
-      "description": "List of memberships that the customer is activated with, identified by the `id` of the Loyalty Membership object."
     }
   }
 }

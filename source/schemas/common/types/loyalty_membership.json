@@ -4,7 +4,7 @@
   "title": "Loyalty Membership",
   "description": "Loyalty membership that the business offers or associated with.",
   "type": "object",
-  "required": ["id", "name", "tiers", "activated_tiers"],
+  "required": ["id", "name", "tiers"],
   "properties": {
     "id": {
       "type": "string",
@@ -50,6 +50,17 @@
         "$ref": "membership_reward.json"
       },
       "description": "List of quantifiable rewards value the user holds. Each object encapsulates one type of reward the membership offers."
+    },
+    "provisional": {
+      "type": "boolean",
+      "default": false,
+      "description": "True if this membership requires additional verification.",
+      "ucp_request": "omit"
+    },
+    "eligibility": {
+      "$ref": "../../shopping/types/reverse_domain_name.json",
+      "description": "The eligibility claim accepted by the Business for this membership. Corresponds to a value from context.eligibility.",
+      "ucp_request": "omit"
     }
   }
 }
