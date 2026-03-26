@@ -13,7 +13,7 @@
       "description": "Cart extended with Loyalty capability.",
       "allOf": [
         {
-          "$ref": "cart.json"
+          "$ref": "../shopping/cart.json"
         },
         {
           "type": "object",
