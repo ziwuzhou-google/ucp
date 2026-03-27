@@ -77,41 +77,45 @@ Businesses can follow standard advertisement mechanism to advertise loyalty supp
 
 ### Entities
 
+#### Loyalty
+
+{{ schema_fields('loyalty', 'loyalty') }}
+
 #### Loyalty Membership
 
-{{ schema_fields('types/loyalty_membership', 'loyalty') }}
+{{ schema_fields('loyalty_membership', 'loyalty') }}
 
 #### Membership Tier
 
-{{ schema_fields('types/membership_tier', 'loyalty') }}
+{{ schema_fields('membership_tier', 'loyalty') }}
 
 #### Membership Tier Condition
 
-{{ schema_fields('types/membership_tier_condition', 'loyalty') }}
+{{ schema_fields('membership_tier_condition', 'loyalty') }}
 
 #### Membership Tier Benefit
 
-{{ schema_fields('types/membership_tier_benefit', 'loyalty') }}
+{{ schema_fields('membership_tier_benefit', 'loyalty') }}
 
 #### Membership Reward
 
-{{ schema_fields('types/membership_reward', 'loyalty') }}
+{{ schema_fields('membership_reward', 'loyalty') }}
 
 #### Balance Currency
 
-{{ schema_fields('types/balance_currency', 'loyalty') }}
+{{ schema_fields('balance_currency', 'loyalty') }}
 
 #### Membership Balance
 
-{{ schema_fields('types/membership_balance', 'loyalty') }}
+{{ schema_fields('membership_balance', 'loyalty') }}
 
 #### Expiring Balance
 
-{{ schema_fields('types/expiring_balance', 'loyalty') }}
+{{ schema_fields('expiring_balance', 'loyalty') }}
 
 #### Balance Redemption
 
-{{ schema_fields('types/balance_redemption', 'loyalty') }}
+{{ schema_fields('balance_redemption', 'loyalty') }}
 
 ## Eligibility Claims
 
