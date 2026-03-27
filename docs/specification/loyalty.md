@@ -77,10 +77,6 @@ Businesses can follow standard advertisement mechanism to advertise loyalty supp
 
 ### Entities
 
-#### Loyalty
-
-{{ schema_fields('types/loyalty', 'loyalty') }}
-
 #### Loyalty Membership
 
 {{ schema_fields('types/loyalty_membership', 'loyalty') }}
