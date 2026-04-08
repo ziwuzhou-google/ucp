@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/common/types/earning_breakdown.json",
+  "title": "Earning Breakdown",
+  "description": "Breakdown rule of the reward earnings",
+  "type": "object",
+  "required": ["id", "amount"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Earning rule identifier."
+    },
+    "amount": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Rewards earned from this rule."
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable explanation (e.g. '2x points on footwear')."
+    },
+    "source": {
+      "type": "string",
+      "description": "JSONPath to the source tier that offers the rewards."
+    }
+  }
+}
