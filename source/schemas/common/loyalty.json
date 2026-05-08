@@ -15,8 +15,7 @@
           "description": "Unique rewards breakdown rule identifier."
         },
         "amount": {
-          "type": "integer",
-          "minimum": 0,
+          "$ref": "types/amount.json",
           "description": "Rewards earned from this rule."
         },
         "description": {
@@ -35,8 +34,7 @@
       "required": ["amount"],
       "properties": {
         "amount": {
-          "type": "integer",
-          "minimum": 0,
+          "$ref": "types/amount.json",
           "description": "Total rewards to be earned if the transaction completes."
         },
         "breakdown": {

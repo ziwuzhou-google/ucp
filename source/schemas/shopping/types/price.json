@@ -10,7 +10,7 @@
   ],
   "properties": {
     "amount": {
-      "$ref": "amount.json",
+      "$ref": "../../common/types/amount.json",
       "description": "Amount in ISO 4217 minor units. Use 0 for free items."
     },
     "currency": {
