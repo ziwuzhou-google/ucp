@@ -209,11 +209,7 @@
           "properties": {
             "loyalty": {
               "$ref": "#/$defs/loyalty",
-              "ucp_request": {
-                "create": "optional",
-                "update": "optional",
-                "complete": "omit"
-              }
+              "ucp_request": "omit"
             }
           }
         }
