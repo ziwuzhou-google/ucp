@@ -140,7 +140,7 @@
           },
           "description": "List of tiers associated with the membership track."
         },
-        "rewards": {
+        "reward_currencies": {
           "type": "array",
           "items": {
             "$ref": "#/$defs/reward_currency"
@@ -198,6 +198,24 @@
         "description": "Payload that describes the membership information corresponds to the claim.",
         "ucp_request": "omit"
       }
+    },
+    "dev.ucp.shopping.cart": {
+      "title": "Cart with Loyalty",
+      "description": "Cart extended with Loyalty capability.",
+      "allOf": [
+        {
+          "$ref": "../shopping/cart.json"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "loyalty": {
+              "$ref": "#/$defs/loyalty",
+              "ucp_request": "omit"
+            }
+          }
+        }
+      ]
     },
     "dev.ucp.shopping.checkout": {
       "title": "Checkout with Loyalty",
