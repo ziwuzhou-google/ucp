@@ -374,7 +374,7 @@ def define_env(env):
       ref_path, fragment = ref_string.split("#/$defs/", 1)
 
     # Redirect all types/ references to the reference specification
-    if "types/" in ref_string:
+    if ref_string.startswith("types/"):
       spec_file_name = "reference"
 
     # Redirect refs to common/types/ or shopping/types/ schemas to reference.
@@ -1012,25 +1012,19 @@ def define_env(env):
       schema_base_path / sub_dir if sub_dir != "." else schema_base_path
     )
 
-    valid_paths = [path for path in scan_paths if path.is_dir()]
-
-    if not valid_paths:
-      return (
-        f"<p><em>Schema directory '{sub_dir}' not found "
-        "in shopping or common paths.</em></p>"
-      )
-
-    schema_files = []
-    for path in valid_paths:
-      schema_files.extend([f for f in path.iterdir() if f.suffix == ".json"])
-
-    if not schema_files:
-      paths_str = ", ".join([str(p) for p in valid_paths])
-      return f"<p><em>No schema files found in {paths_str}</em></p>"
-
-    schema_files = sorted(schema_files, key=lambda f: f.name)
+    if not scan_path.is_dir():
+      return f"<p><em>Schema directory not found: {scan_path}</em></p>"
 
     output = []
+    try:
+      schema_files = sorted(
+        [f for f in scan_path.iterdir() if f.suffix == ".json"]
+      )
+    except FileNotFoundError:
+      return f"<p><em>Schema directory not found: {scan_path}</em></p>"
+
+    if not schema_files:
+      return f"<p><em>No schema files found in {scan_path}</em></p>"
 
     for schema_file in schema_files:
       entity_name_base = schema_file.stem
