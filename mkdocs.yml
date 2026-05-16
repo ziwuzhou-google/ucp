@@ -52,6 +52,7 @@ nav:
           - Buyer Consent Extension: specification/buyer-consent.md
           - Discounts Extension: specification/discount.md
           - Fulfillment Extension: specification/fulfillment.md
+          - Loyalty Extension: specification/loyalty.md
       - Cart Capability:
           - Overview: specification/cart.md
           - Transports:
@@ -317,9 +318,10 @@ plugins:
               pickup destinations, and method-agnostic UI rendering contracts.
           - specification/loyalty.md: >-
               Loyalty Extension, enabling high-fidelity member benefit recognition
-              during checkout by defining schemas for tracks, tiers, benefits,
-              and reward earning forecasts while managing provisional eligibility
-              claims and enforcing data-minimization privacy rules.
+              during catalog, cart, and checkout by defining schemas for
+              memberships, tiers, benefits, and reward earning forecasts while
+              managing provisional eligibility claims and enforcing
+              data-minimization privacy rules.
         Cart Capability:
           - specification/cart.md: >-
               Pre-purchase Cart Capability, detailing item collection, state

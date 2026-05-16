@@ -20,10 +20,10 @@
 
 The loyalty extension is designed to facilitate high-fidelity loyalty experiences:
 ensuring existing loyalty members can seamlessly access their benefits during agentic
-Cart and Checkout experiences. By enabling buyers to see their specific tier, eligible
-rewards, and immediately applicable benefits before finalizing a purchase, it addresses
-a foundational expectation for program members and removes friction from the checkout
-funnel.
+Catalog, Cart, and Checkout experiences. By enabling buyers to see their specific tier,
+eligible rewards, and immediately applicable benefits before finalizing a purchase, it
+addresses a foundational expectation for program members and removes friction from the
+checkout funnel.
 
 Specifically the following core use cases of benefit recognition for known members are
 addressed:
@@ -93,15 +93,30 @@ instrument or a future redemption capability, not by this loyalty extension.
 ## Discovery
 
 Businesses can follow standard advertisement mechanism to advertise loyalty support in
-the Business profile. Currently the loyalty extension can decorate both the cart and
-checkout capabilities. Businesses MAY advertise loyalty support for cart only, checkout
-only, or both. Platforms SHOULD check which resources are extended.
+the Business profile. Currently the loyalty extension can decorate catalog search,
+catalog lookup, cart, and checkout capabilities. Businesses MAY advertise loyalty
+support for any subset of these capabilities. Platforms SHOULD check which resources are
+extended.
 
 ```json
 {
   "ucp": {
     "version": "2026-04-08",
     "capabilities": {
+      "dev.ucp.shopping.catalog.search": [
+        {
+          "version": "2026-04-08",
+          "spec": "https://ucp.dev/2026-04-08/specification/catalog/search",
+          "schema": "https://ucp.dev/2026-04-08/schemas/shopping/catalog_search.json"
+        }
+      ],
+      "dev.ucp.shopping.catalog.lookup": [
+        {
+          "version": "2026-04-08",
+          "spec": "https://ucp.dev/2026-04-08/specification/catalog/lookup",
+          "schema": "https://ucp.dev/2026-04-08/schemas/shopping/catalog_lookup.json"
+        }
+      ],
       "dev.ucp.shopping.cart": [
         {
           "version": "2026-04-08",
@@ -119,7 +134,12 @@ only, or both. Platforms SHOULD check which resources are extended.
       "dev.ucp.common.loyalty": [
         {
           "version": "2026-04-08",
-          "extends": ["dev.ucp.shopping.cart", "dev.ucp.shopping.checkout"],
+          "extends": [
+            "dev.ucp.shopping.catalog.search",
+            "dev.ucp.shopping.catalog.lookup",
+            "dev.ucp.shopping.cart",
+            "dev.ucp.shopping.checkout"
+          ],
           "spec": "https://ucp.dev/2026-04-08/specification/loyalty",
           "schema": "https://ucp.dev/2026-04-08/schemas/common/loyalty.json"
         }
@@ -131,6 +151,8 @@ only, or both. Platforms SHOULD check which resources are extended.
 
 **Dependencies:**
 
+* Catalog Search Capability
+* Catalog Lookup Capability
 * Cart Capability
 * Checkout Capability
 
@@ -213,8 +235,10 @@ conditions beyond membership, such as saving $10 only after a $500+ purchase. Bu
 MUST evaluate those conditions before applying the benefit.
 
 When the benefit applies, businesses MUST surface the price impact through the base
-capability's `totals` or `line_items[].totals`, using `type: "items_discount"` and
-`display_text` to attribute the loyalty source when possible.
+capability's price fields. Catalog responses use `price` / `list_price` and
+`price_range` / `list_price_range`; cart and checkout responses use `totals` or
+`line_items[].totals` with `type: "items_discount"` and `display_text` to attribute the
+loyalty source when possible.
 
 When the discount extension is active, businesses SHOULD also populate
 `discounts.applied[]` for structured attribution. In that case, `eligibility` identifies
@@ -412,15 +436,15 @@ loyalty extension needs to be included in the response as well.
 
 ## Use Cases and Examples
 
-With the help of the loyalty extension, the cart/checkout capability can be further
-decorated to provide full visibility into buyers’ member-exclusive perks and allows the
-platform to render the extra information to facilitate the transaction.
+With the help of the loyalty extension, the catalog, cart, and checkout capabilities can
+be further decorated to provide full visibility into buyers’ member-exclusive perks and
+allows the platform to render the extra information to facilitate the transaction.
 
 ### Compound Price-Impacting Benefits
 
 Loyalty extension can provide buyer status info that helps the platform explain member
 discounts. Price-impacting loyalty benefits are reflected in the base capability's
-totals. When the discount extension is also active, the platform can explain each
+price fields. When the discount extension is also active, the platform can explain each
 discount via `discounts.applied[].title` and correlate
 `discounts.applied[].eligibility` back to `loyalty` entries to show which accepted
 membership claims produced the monetary benefit. In the example below, the buyer

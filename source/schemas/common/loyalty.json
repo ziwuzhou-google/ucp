@@ -200,6 +200,62 @@
         "ucp_request": "omit"
       }
     },
+    "dev.ucp.shopping.catalog.search": {
+      "title": "Catalog Search with Loyalty",
+      "description": "Catalog Search response extended with Loyalty capability.",
+      "allOf": [
+        {
+          "$ref": "../shopping/catalog_search.json#/$defs/search_response"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "loyalty": {
+              "$ref": "#/$defs/loyalty",
+              "ucp_request": "omit"
+            }
+          }
+        }
+      ]
+    },
+    "dev.ucp.shopping.catalog.lookup": {
+      "title": "Catalog Lookup with Loyalty",
+      "description": "Catalog Lookup response extended with Loyalty capability.",
+      "oneOf": [
+        {
+          "allOf": [
+            {
+              "$ref": "../shopping/catalog_lookup.json#/$defs/lookup_response"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "loyalty": {
+                  "$ref": "#/$defs/loyalty",
+                  "ucp_request": "omit"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "../shopping/catalog_lookup.json#/$defs/get_product_response"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "loyalty": {
+                  "$ref": "#/$defs/loyalty",
+                  "ucp_request": "omit"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
     "dev.ucp.shopping.cart": {
       "title": "Cart with Loyalty",
       "description": "Cart extended with Loyalty capability.",
