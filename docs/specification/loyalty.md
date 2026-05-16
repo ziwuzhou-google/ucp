@@ -249,12 +249,11 @@ loyalty source when possible.
 
 For cart and checkout responses, when the discount extension is active, businesses
 SHOULD also populate `discounts.applied[]` for structured attribution. In that case,
-`eligibility` identifies
-the claim or claims required for the discount. An eligibility array is conjunctive: all
-listed claims are required. Disjunctive (any-of) eligibility MUST be modeled as separate
-`discounts.applied[]` objects, one per independent path. If the discount still requires
-verification, for example because one or more accepted loyalty claims remain unverified,
-the corresponding applied discount MUST set `provisional: true`.
+`eligibility` identifies the claim or claims required for the discount. An eligibility
+array is conjunctive: all listed claims are required. Disjunctive (any-of) eligibility
+MUST be modeled as separate `discounts.applied[]` objects, one per independent path. If
+the discount still requires verification, for example because one or more accepted loyalty
+claims remain unverified, the corresponding applied discount MUST set `provisional: true`.
 
 If the benefit does not apply, businesses SHOULD notify the buyer via messages with
 `type: "warning"` and explain the inapplicability of those monetary loyalty benefits.
@@ -325,7 +324,11 @@ a warning message to disclose the inapplicability of the second discount.
           "tiers": [
             {
               "id": "cardholder",
-              "name": "Store Cardholder"
+              "name": "Store Cardholder",
+              "benefits": [
+                { "id": "BEN_001", "description": "Get $10 off with $500+ purchase." },
+                { "id": "BEN_002", "description": "Early access to sales" }
+              ]
             }
           ],
           "provisional": true
@@ -391,7 +394,8 @@ non-provisional and `display_id` is returned.
               "id": "tier_1",
               "name": "Store Cardholder",
               "benefits": [
-                { "id": "BEN_001", "description": "Early access to sales" }
+                { "id": "BEN_001", "description": "Get $10 off with $500+ purchase." },
+                { "id": "BEN_002", "description": "Early access to sales" }
               ]
             }
           ],

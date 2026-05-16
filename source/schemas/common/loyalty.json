@@ -170,7 +170,7 @@
         },
         "display_id": {
           "type": "string",
-          "description": "A masked or partial version of the membership id for user recognition (e.g., '****5678')."
+          "description": "A masked or partial version of the membership id for user recognition (e.g., '****5678'). MUST NOT be set if the membership has not been verified."
         },
         "tiers": {
           "type": "array",
@@ -198,7 +198,7 @@
       "description": "Key-value map whose keys represent buyer/platform asserted eligibility claims and whose values represent associated membership information. All loyalty keys MUST use reverse-domain naming to ensure provenance and prevent collisions when multiple extensions contribute to the shared namespace.",
       "propertyNames": {
         "$ref": "types/reverse_domain_name.json",
-        "description": "Reverse-domain identifier that represents eligibility claim accepted by the Business for this membership. Corresponds to a value from context.eligibility."
+        "description": "Reverse-domain identifier that represents eligibility claim accepted by the Business for this membership."
       },
       "additionalProperties": {
         "$ref": "#/$defs/loyalty_membership",
