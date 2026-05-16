@@ -176,7 +176,8 @@ The loyalty extension holds a key-value map whose keys are reverse-domain identi
 same convention as services, capabilities, and payment handlers in the business profile,
 and represent eligibility claims about loyalty memberships that businesses recognize.
 The values contain detailed membership info corresponding to the claims, and
-specifically contains a required `provisional` field to indicate the verification state.
+uses the `provisional` field to indicate the verification state when additional
+verification is required.
 
 Programs that can be joined independently MUST be modeled as separate sibling entries
 under the loyalty map, distinguished by their reverse-domain naming.

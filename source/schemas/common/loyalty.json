@@ -152,7 +152,7 @@
     "loyalty_membership": {
       "type": "object",
       "description": "Loyalty membership the business has accepted for the eligibility claim represented by the parent map key. Programs that can be joined independently MUST be modeled as separate sibling entries under the loyalty map, distinguished by reverse-domain naming (e.g., 'com.target.circle' and 'com.target.circle.card').",
-      "required": ["id", "name", "provisional"],
+      "required": ["id", "name"],
       "properties": {
         "id": {
           "type": "string",
@@ -182,6 +182,7 @@
         },
         "provisional": {
           "type": "boolean",
+          "default": false,
           "description": "True if this membership requires additional verification."
         }
       }
