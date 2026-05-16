@@ -74,7 +74,7 @@
     },
     "membership_reward": {
       "type": "object",
-      "description": "Quantifiable and collectable reward of loyalty membership of the customer.",
+      "description": "Quantifiable reward type and optional earning forecast for the current transaction.",
       "required": ["currency"],
       "properties": {
         "currency": {
@@ -184,7 +184,7 @@
           "items": {
             "$ref": "#/$defs/membership_reward"
           },
-          "description": "List of quantifiable rewards the buyer holds within this membership. Each object encapsulates one type of reward."
+          "description": "Reward types and earning forecasts associated with this membership. Each object encapsulates one type of reward."
         },
         "provisional": {
           "type": "boolean",
