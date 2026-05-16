@@ -183,6 +183,10 @@ extended.
 
 {{ extension_schema_fields('loyalty.json#/$defs/membership_reward', 'loyalty') }}
 
+#### Reward Amount
+
+{{ extension_schema_fields('loyalty.json#/$defs/reward_amount', 'loyalty') }}
+
 #### Reward Currency
 
 {{ extension_schema_fields('loyalty.json#/$defs/reward_currency', 'loyalty') }}

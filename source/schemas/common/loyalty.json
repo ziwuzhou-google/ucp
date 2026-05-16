@@ -5,6 +5,11 @@
   "title": "Loyalty Extension",
   "description": "Extends various Capabilities with loyalty support using memberships info.",
   "$defs": {
+    "reward_amount": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Non-negative integer amount denominated in the minor unit of the associated reward currency. The associated reward currency's `decimal_places` defines the minor-to-major ratio and defaults to 0 when omitted."
+    },
     "earning_breakdown": {
       "type": "object",
       "description": "Breakdown rule of the reward earnings",
@@ -15,7 +20,7 @@
           "description": "Unique rewards breakdown rule identifier."
         },
         "amount": {
-          "$ref": "types/amount.json",
+          "$ref": "#/$defs/reward_amount",
           "description": "Rewards earned from this rule."
         },
         "description": {
@@ -34,7 +39,7 @@
       "required": ["amount"],
       "properties": {
         "amount": {
-          "$ref": "types/amount.json",
+          "$ref": "#/$defs/reward_amount",
           "description": "Total rewards to be earned if the transaction completes."
         },
         "breakdown": {
@@ -61,6 +66,7 @@
         },
         "decimal_places": {
           "type": "integer",
+          "minimum": 0,
           "default": 0,
           "description": "The position of a digit to the right of a decimal point. Applies to all amount related fields for rewards."
         }
