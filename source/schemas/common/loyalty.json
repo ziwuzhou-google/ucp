@@ -177,7 +177,7 @@
           "items": {
             "$ref": "#/$defs/membership_tier"
           },
-          "description": "Active tier(s) the buyer holds within this membership. Most programs are single-status (one entry); programs with parallel status dimensions (e.g., current and lifetime) populate one entry per active tier. Omitted when no tier has been resolved (typically when provisional is true)."
+          "description": "Active or display-safe tier context for this membership. Most programs are single-status (one entry); programs with parallel status dimensions (e.g., current and lifetime) populate one entry per active tier. Omitted when no tier context has been resolved."
         },
         "rewards": {
           "type": "array",
