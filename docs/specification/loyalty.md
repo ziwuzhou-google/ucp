@@ -207,28 +207,27 @@ contract defined in the checkout capability.
 
 ### Monetary loyalty benefits
 
-When monetary price impacting loyalty benefits (e.g. member pricing/shipping) are
-available, it is worth noting that sometimes they have extra conditions besides
-membership requirement (e.g. Save $10 with $500+ purchase for members). In this case,
-businesses MUST check the eligibility of these extra conditions first regardless of
-membership claims/authorization identity. If the check passes or none is needed,
-businesses MUST surface the price-impacting loyalty benefits via the base capability's
-`totals` / `line_items[].totals`, and use `type: "items_discount"` with `display_text`
-to attribute the loyalty source when possible. If discount extension is also available,
-businesses MAY additionally populate `discounts.applied[]` with `eligibility` set to
-hold the corresponding membership claim(s) that are required for the discount (some
-loyalty discount is unlocked only when the buyer holds multiple memberships
-simultaneously). Because the discount’s eligibility relies on the conjunctive
-intersection of all eligibility keys, the `discounts.applied[]` object MUST evaluate to
-`provisional: true` if any string listed within `eligibility` field points to a loyalty
-membership where `provisional` is true. Conversely, disjunctive (any-of) eligibility —
-where any one of several independent claims unlocks the same benefit — MUST NOT be
-combined into a single array. Instead, businesses MUST model these alternative paths by
-emitting completely separate objects inside `discounts.applied[]`, ensuring each
-separate path carries its own discrete string mapping. This allows the platform to
-correctly and easily identify discount applicability and render it to buyers. If the
-check fails, businesses SHOULD notify the buyer via messages with `type: "warning"` and
-explain the inapplicability of those monetary loyalty benefits.
+Monetary price-impacting loyalty benefits (e.g. member pricing/shipping) can have
+conditions beyond membership, such as saving $10 only after a $500+ purchase. Businesses
+MUST evaluate those conditions before applying the benefit.
+
+When the benefit applies, businesses MUST surface the price impact through the base
+capability's `totals` or `line_items[].totals`, using `type: "items_discount"` and
+`display_text` to attribute the loyalty source when possible.
+
+When the discount extension is active, businesses SHOULD also populate
+`discounts.applied[]` for structured attribution. In that case, `eligibility` identifies
+the claim or claims required for the discount. An eligibility array is conjunctive: all
+listed claims are required. Disjunctive (any-of) eligibility MUST be modeled as separate
+`discounts.applied[]` objects, one per independent path. If the discount still requires
+verification, for example because one or more accepted loyalty claims remain unverified,
+the corresponding applied discount MUST set `provisional: true`.
+
+If the benefit does not apply, businesses SHOULD notify the buyer via messages with
+`type: "warning"` and explain the inapplicability of those monetary loyalty benefits.
+Businesses MUST NOT put inapplicable benefits in the discount extension. Instead they
+MAY set them as part of `benefits` within the loyalty extension and set the `path` within
+the warning message to reference back for additional context.
 
 When loyalty membership claims are accepted, business MAY use `type: "info"` to explain
 the effects of applied monetary loyalty benefits .
@@ -412,18 +411,16 @@ platform to render the extra information to facilitate the transaction.
 
 ### Compound Price-Impacting Benefits
 
-Loyalty extension can provide buyer status info to allow the platform to transparently
-assert that correct and comprehensive member discounts are applied. In the example
-below, the buyer receives a 15% bonus discount because they hold BOTH the Retail Club
-membership and the Retail Card. The `eligibility` attribute reflects this conjunction
-natively. Platform now not only can explain the source of discount via
-`discounts.applied[].title` within discount extension, but also assure the buyer that
-member specific discount is recognized because of their verified loyalty status via
-`tiers[].name` within loyalty extension, which can be sourced from correlating
-`discounts.applied[].eligibility` to `loyalty['com.example.retail_club']` and
-`loyalty['com.example.retail_card']` to identify which memberships provide the monetary
-benefit. Platform can then render “Retail Club Gold Member and Retail Visa Card benefits
-applied.” for example.
+Loyalty extension can provide buyer status info that helps the platform explain member
+discounts. Price-impacting loyalty benefits are reflected in the base capability's
+totals. When the discount extension is also active, the platform can explain each
+discount via `discounts.applied[].title` and correlate
+`discounts.applied[].eligibility` back to `loyalty` entries to show which accepted
+membership claims produced the monetary benefit. In the example below, the buyer
+receives a 15% bonus discount because they hold BOTH the Retail Club membership and the
+Retail Card, and the `eligibility` array reflects this conjunction natively. Platform
+can then render “Retail Club Gold Member and Retail Visa Card benefits applied.” for
+example.
 
 === "Request"
 
