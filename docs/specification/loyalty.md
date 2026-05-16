@@ -194,8 +194,9 @@ identifier the business would accept as a claim value.
   the buyer holds within the `tiers` array and SHOULD set `display_id` as a masked unique
   identifier of the buyer.
 * When a membership claim in the request is recognized and accepted but not verified by
-  the business, the business MUST return `provisional: true`. It MUST NOT populate the
-  `tiers` array (i.e. leave it empty) and MUST NOT return `display_id`.
+  the business, the business MUST return `provisional: true`. It MAY return display-safe
+  tier context for the state accepted during the session, and MUST NOT return
+  `display_id` until the membership is verified.
 * When a membership claim in the request is accepted but cannot be verified, the business
   MUST communicate the failure via a recoverable `message` with `type: "error"` and
   `code: "eligibility_invalid"`. Platforms MAY then choose to remove the membership
@@ -252,7 +253,7 @@ discount.
     ```json
     {
       "context": {
-        "eligibility": ["com.example.loyalty.visa_card"]
+        "eligibility": ["com.example.loyalty.store_card"]
       },
       "line_items": [
         {
@@ -277,7 +278,7 @@ discount.
             "title": "Loyalty benefit 1",
             "amount": 10,
             "provisional": true,
-            "eligibility": "com.example.loyalty.visa_card",
+            "eligibility": "com.example.loyalty.store_card",
             "allocations": [
               {"path": "$.line_items[0]", "amount": 10}
             ]
@@ -285,9 +286,15 @@ discount.
         ]
       },
       "loyalty": {
-        "com.example.loyalty.visa_card": {
+        "com.example.loyalty.store_card": {
           "id": "membership_1",
           "name": "My Loyalty Program",
+          "tiers": [
+            {
+              "id": "cardholder",
+              "name": "Store Cardholder"
+            }
+          ],
           "provisional": true
         }
       },
@@ -295,7 +302,7 @@ discount.
         {
           "type": "warning",
           "code": "membership_benefit_ineligible",
-          "path": "$.loyalty['com.example.loyalty.visa_card']",
+          "path": "$.loyalty['com.example.loyalty.store_card']",
           "content": "Cart size is smaller than required to receive the $10 discount."
         }
       ]
@@ -311,7 +318,7 @@ non-provisional, and `display_id` is returned.
     ```json
     {
       "context": {
-        "eligibility": ["com.example.loyalty.visa_card"]
+        "eligibility": ["com.example.loyalty.store_card"]
       },
       "line_items": [
         {
@@ -336,7 +343,7 @@ non-provisional, and `display_id` is returned.
             "title": "Loyalty benefit 1",
             "amount": 10,
             "provisional": false,
-            "eligibility": "com.example.loyalty.visa_card",
+            "eligibility": "com.example.loyalty.store_card",
             "allocations": [
               {"path": "$.line_items[0]", "amount": 10}
             ]
@@ -344,14 +351,14 @@ non-provisional, and `display_id` is returned.
         ]
       },
       "loyalty": {
-        "com.example.loyalty.visa_card": {
+        "com.example.loyalty.store_card": {
           "id": "membership_1",
           "display_id": "****5678",
           "name": "My Loyalty Program",
           "tiers": [
             {
               "id": "tier_1",
-              "name": "Loyalty Visa Holder",
+              "name": "Store Cardholder",
               "benefits": [
                 { "id": "BEN_001", "description": "Early access to sales" }
               ]
@@ -373,7 +380,7 @@ loyalty extension needs to be included in the response as well.
     ```json
     {
       "context": {
-        "eligibility": ["com.example.loyalty.visa_card"]
+        "eligibility": ["com.example.loyalty.store_card"]
       },
       "line_items": [
         {
@@ -397,7 +404,7 @@ loyalty extension needs to be included in the response as well.
           "type": "error",
           "severity": "recoverable",
           "code": "eligibility_invalid",
-          "content": "Buyer is not a loyalty Visa holder."
+          "content": "Buyer is not a store card holder."
         }
       ]
     }
@@ -419,7 +426,7 @@ discount via `discounts.applied[].title` and correlate
 membership claims produced the monetary benefit. In the example below, the buyer
 receives a 15% bonus discount because they hold BOTH the Retail Club membership and the
 Retail Card, and the `eligibility` array reflects this conjunction natively. Platform
-can then render “Retail Club Gold Member and Retail Visa Card benefits applied.” for
+can then render “Retail Club Gold Member and Retail Card benefits applied.” for
 example.
 
 === "Request"
@@ -506,7 +513,7 @@ example.
           "tiers": [
             {
               "id": "cardholder",
-              "name": "Retail Visa Card",
+              "name": "Retail Card",
               "benefits": [
                 { "id": "BEN_002", "description": "Free standard shipping" }
               ]
