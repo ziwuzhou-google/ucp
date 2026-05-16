@@ -70,21 +70,24 @@ instrument or a future redemption capability, not by this loyalty extension.
 ```json
 {
   "loyalty": {
-    "com.example.loyalty" : {
+    "com.example.loyalty": {
+      "id": "membership_1",
+      "name": "Example Rewards",
       "tiers": [
         {
+          "id": "gold",
+          "name": "Gold",
           "benefits": [
-            {
-              ...
-            }
+            { "id": "BEN_001", "description": "Early access to sales" }
           ]
         }
       ],
       "rewards": [
         {
-          ...
+          "currency": { "name": "LoyaltyStars", "code": "LST" }
         }
-      ]
+      ],
+      "provisional": false
     }
   }
 }
@@ -92,7 +95,7 @@ instrument or a future redemption capability, not by this loyalty extension.
 
 ## Discovery
 
-Businesses can follow standard advertisement mechanism to advertise loyalty support in
+Businesses can follow the standard advertising mechanism to advertise loyalty support in
 the Business profile. Currently the loyalty extension can decorate catalog search,
 catalog lookup, cart, and checkout capabilities. Businesses MAY advertise loyalty
 support for any subset of these capabilities. Platforms SHOULD check which resources are
@@ -195,17 +198,17 @@ extended.
 ## Loyalty behavior
 
 The loyalty extension holds a key-value map whose keys are reverse-domain identifiers —
-same convention as services, capabilities, and payment handlers in the business profile,
-and represent eligibility claims about loyalty memberships that businesses recognize.
-The values contain detailed membership info corresponding to the claims, and
-uses the `provisional` field to indicate the verification state when additional
-verification is required.
+the same convention as services, capabilities, and payment handlers in the business
+profile. The keys represent eligibility claims about loyalty memberships that
+businesses recognize. The values contain membership information corresponding to those
+claims and use the `provisional` field to indicate the verification state when
+additional verification is required.
 
 Programs that can be joined independently MUST be modeled as separate sibling entries
 under the loyalty map, distinguished by their reverse-domain naming.
 
 Platforms MAY send buyer loyalty membership claims via `context.eligibility` in the
-request to activate loyalty extension and claim for loyalty benefits. Alternatively,
+request to activate the loyalty extension and claim loyalty benefits. Alternatively,
 when the buyer is authenticated and the business can determine loyalty membership from
 the authenticated identity, businesses MAY populate the loyalty extension without an
 explicit eligibility claim. In this case, the map key MUST be the same reverse-domain
@@ -214,7 +217,7 @@ identifier the business would accept as a claim value.
 * When a business verifies a membership claim or determines membership from authenticated
   identity, it MUST return `provisional: false`. It also MUST populate the active tier(s)
   the buyer holds within the `tiers` array and SHOULD set `display_id` as a masked unique
-  identifier of the buyer.
+  identifier for the buyer.
 * When a membership claim in the request is recognized and accepted but not verified by
   the business, the business MUST return `provisional: true`. It MAY return display-safe
   tier context for the state accepted during the session, and MUST NOT return
@@ -222,7 +225,7 @@ identifier the business would accept as a claim value.
 * When a membership claim in the request is accepted but cannot be verified, the business
   MUST communicate the failure via a recoverable `message` with `type: "error"` and
   `code: "eligibility_invalid"`. Platforms MAY then choose to remove the membership
-  claim and proceed the checkout without loyalty benefits applied.
+  claim and proceed through checkout without loyalty benefits applied.
 
 At checkout completion, all accepted but unverified loyalty claims MUST be resolved per
 the [Eligibility Verification at Completion](checkout.md#eligibility-verification-at-completion)
@@ -240,8 +243,9 @@ capability's price fields. Catalog responses use `price` / `list_price` and
 `line_items[].totals` with `type: "items_discount"` and `display_text` to attribute the
 loyalty source when possible.
 
-When the discount extension is active, businesses SHOULD also populate
-`discounts.applied[]` for structured attribution. In that case, `eligibility` identifies
+For cart and checkout responses, when the discount extension is active, businesses
+SHOULD also populate `discounts.applied[]` for structured attribution. In that case,
+`eligibility` identifies
 the claim or claims required for the discount. An eligibility array is conjunctive: all
 listed claims are required. Disjunctive (any-of) eligibility MUST be modeled as separate
 `discounts.applied[]` objects, one per independent path. If the discount still requires
@@ -251,26 +255,29 @@ the corresponding applied discount MUST set `provisional: true`.
 If the benefit does not apply, businesses SHOULD notify the buyer via messages with
 `type: "warning"` and explain the inapplicability of those monetary loyalty benefits.
 Businesses MUST NOT put inapplicable benefits in the discount extension. Instead they
-MAY set them as part of `benefits` within the loyalty extension and set the `path` within
-the warning message to reference back for additional context.
+MAY set them as part of `benefits` within the loyalty extension and set the warning
+message `path` to reference the relevant membership for additional context.
 
-When loyalty membership claims are accepted, business MAY use `type: "info"` to explain
-the effects of applied monetary loyalty benefits .
+When loyalty membership claims are accepted, businesses MAY use `type: "info"` to
+explain the effects of applied monetary loyalty benefits.
 
 **Loyalty benefits message codes:**
 
-| Type      | Code                           | When                                                    |
-| --------- | ------------------------------ | ------------------------------------------------------- |
-| `info`    | `membership_benefit_eligible`  | Specific benefit confirmed applicable to this order     |
-| `warning` | `membership_benefit_ineligible`| Benefit exists but conditions not met for this order    |
+| Type      | Code                            | When                                                 |
+| --------- | ------------------------------- | ---------------------------------------------------- |
+| `info`    | `membership_benefit_eligible`   | Specific benefit confirmed applicable to this order  |
+| `warning` | `membership_benefit_ineligible` | Benefit exists but conditions not met for this order |
+
+The examples below are abbreviated to focus on loyalty and discount extension fields;
+complete cart and checkout responses also include base required fields such as `ucp`,
+`id`, `currency`, and `totals`.
 
 Building on the store loyalty card example from
 [Eligibility Verification at Completion](checkout.md#eligibility-verification-at-completion),
-and assume it offers one unconditional pricing discount on the product and one
-conditional discount that current checkout cart fails to satisfy. Platform can surface
-the first provisional discount with disclaimers like "verified at purchase" and
-additionally show a warning message to disclose the inapplicability of the second
-discount.
+assume the card offers one unconditional product discount and one conditional discount
+that the current checkout cart fails to satisfy. The platform can surface the first
+provisional discount with disclaimers like "verified at purchase" and additionally show
+a warning message to disclose the inapplicability of the second discount.
 
 === "Request"
 
@@ -282,11 +289,9 @@ discount.
       "line_items": [
         {
           "item": {
-            "id": "prod_1",
-            "quantity": 1,
-            "title": "T-Shirt",
-            "price": 1000
-          }
+            "id": "prod_1"
+          },
+          "quantity": 1
         }
       ]
     }
@@ -333,9 +338,9 @@ discount.
     }
     ```
 
-Buyer can proceed with checkout without any cart update and if the claim is verified
-successfully by the business, the unconditional member pricing discount becomes
-non-provisional, and `display_id` is returned.
+The buyer can proceed to checkout without any cart update. If the claim is verified
+successfully by the business, the unconditional member-pricing discount becomes
+non-provisional and `display_id` is returned.
 
 === "Request"
 
@@ -347,11 +352,9 @@ non-provisional, and `display_id` is returned.
       "line_items": [
         {
           "item": {
-            "id": "prod_1",
-            "quantity": 1,
-            "title": "T-Shirt",
-            "price": 1000
-          }
+            "id": "prod_1"
+          },
+          "quantity": 1
         }
       ]
     }
@@ -394,10 +397,10 @@ non-provisional, and `display_id` is returned.
     }
     ```
 
-If the claim can not be verified, a recoverable error should be returned from business
-via `messages[]`. Businesses MAY set the optional `path` field within to support back
-referencing to the membership metadata that corresponds to the claim. In this case, the
-loyalty extension needs to be included in the response as well.
+If the claim cannot be verified, the business SHOULD return a recoverable error via
+`messages[]`. Businesses MAY set the optional `path` field to reference the membership
+metadata that corresponds to the claim. In this case, the loyalty extension needs to be
+included in the response as well.
 
 === "Request"
 
@@ -409,11 +412,9 @@ loyalty extension needs to be included in the response as well.
       "line_items": [
         {
           "item": {
-            "id": "prod_1",
-            "quantity": 1,
-            "title": "T-Shirt",
-            "price": 1000
-          }
+            "id": "prod_1"
+          },
+          "quantity": 1
         }
       ]
     }
@@ -438,19 +439,19 @@ loyalty extension needs to be included in the response as well.
 
 With the help of the loyalty extension, the catalog, cart, and checkout capabilities can
 be further decorated to provide full visibility into buyers’ member-exclusive perks and
-allows the platform to render the extra information to facilitate the transaction.
+allow the platform to render the extra information to facilitate the transaction.
 
 ### Compound Price-Impacting Benefits
 
-Loyalty extension can provide buyer status info that helps the platform explain member
-discounts. Price-impacting loyalty benefits are reflected in the base capability's
-price fields. When the discount extension is also active, the platform can explain each
-discount via `discounts.applied[].title` and correlate
+The loyalty extension can provide buyer status information that helps the platform
+explain member discounts. Price-impacting loyalty benefits are reflected in the base
+capability's price fields. When the discount extension is also active, the platform can
+explain each discount via `discounts.applied[].title` and correlate
 `discounts.applied[].eligibility` back to `loyalty` entries to show which accepted
 membership claims produced the monetary benefit. In the example below, the buyer
-receives a 15% bonus discount because they hold BOTH the Retail Club membership and the
-Retail Card, and the `eligibility` array reflects this conjunction natively. Platform
-can then render “Retail Club Gold Member and Retail Card benefits applied.” for
+receives a 15% bonus discount because they hold both the Retail Club membership and the
+Retail Card, and the `eligibility` array reflects this conjunction natively. The
+platform can then render “Retail Club Gold Member and Retail Card benefits applied,” for
 example.
 
 === "Request"
@@ -466,11 +467,9 @@ example.
       "line_items": [
         {
           "item": {
-            "id": "prod_1",
-            "quantity": 1,
-            "title": "T-Shirt",
-            "price": 1000
-          }
+            "id": "prod_1"
+          },
+          "quantity": 1
         }
       ]
     }
@@ -485,10 +484,10 @@ example.
           "id": "li_1",
           "item": {
             "id": "prod_1",
-            "quantity": 1,
             "title": "T-Shirt",
             "price": 1000
           },
+          "quantity": 1,
           "totals": [
             {"type": "subtotal", "amount": 1000},
             {"type": "items_discount", "display_text": "Loyalty member benefit", "amount": -150},
@@ -558,11 +557,12 @@ example.
 In addition to immediate-value benefits like member pricing/shipping, delayed-value
 collectable reward benefits are another crucial element within the loyalty ecosystem.
 Displaying earnings forecasts of these rewards before the buyer commits complements and
-to some extent helps agents handle price objections - rewards earning becomes additional
+to some extent helps agents handle price objections: rewards earning becomes additional
 value on top of any pricing discount. In this example, businesses provide the reward
 earning forecast with a breakdown, using `benefit_id` to correlate the specific
 `membership_tier_benefit` that produced the rule and giving platforms a way to explain
-with full transparency on why the buyer is earning and how the earning is calculated.
+with full transparency into why the buyer is earning rewards and how the earning is
+calculated.
 
 === "Request"
 
@@ -574,11 +574,9 @@ with full transparency on why the buyer is earning and how the earning is calcul
       "line_items": [
         {
           "item": {
-            "id": "prod_1",
-            "quantity": 1,
-            "title": "T-Shirt",
-            "price": 1000
-          }
+            "id": "prod_1"
+          },
+          "quantity": 1
         }
       ]
     }
@@ -593,10 +591,10 @@ with full transparency on why the buyer is earning and how the earning is calcul
           "id": "li_1",
           "item": {
             "id": "prod_1",
-            "quantity": 1,
             "title": "T-Shirt",
             "price": 1000
           },
+          "quantity": 1,
           "totals": [
             {"type": "subtotal", "amount": 1000},
             {"type": "total", "amount": 1000}
@@ -656,8 +654,8 @@ with full transparency on why the buyer is earning and how the earning is calcul
 ## Implementation guidelines
 
 * Loyalty extension response MUST be data-minimized and MUST NOT expose raw stable member
-  identifiers (as this would allow the platform to uniquely identifier individual buyer)
+  identifiers (as this would allow the platform to uniquely identify individual buyers).
 * Loyalty extension response MUST only include `display_id` after verified/authenticated
-  membership
+  memberships.
 * Loyalty extension response MUST treat all `context.eligibility` values in the request as
-  buyer claims rather than proof
+  buyer claims rather than proof.

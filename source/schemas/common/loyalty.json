@@ -116,7 +116,7 @@
           "items": {
             "$ref": "#/$defs/membership_tier_benefit"
           },
-          "description": "List of possible benefits associated with this tier."
+          "description": "List of benefits associated with this tier."
         }
       }
     },
@@ -151,7 +151,7 @@
     },
     "loyalty_membership": {
       "type": "object",
-      "description": "Loyalty membership the business has accepted for the eligibility claim represented by the parent map key. Programs that can be joined independently MUST be modeled as separate sibling entries under the loyalty map, distinguished by reverse-domain naming (e.g., 'com.target.circle' and 'com.target.circle.card').",
+      "description": "Loyalty membership the business has accepted for the eligibility claim represented by the parent map key. Programs that can be joined independently MUST be modeled as separate sibling entries under the loyalty map, distinguished by reverse-domain naming (e.g., 'com.example.rewards' and 'com.example.rewards.card').",
       "required": ["id", "name"],
       "properties": {
         "id": {
@@ -189,14 +189,14 @@
     },
     "loyalty": {
       "type": "object",
-      "description": "Key-value pair with key represents buyer/platform asserted eligibility claims and value represents associated membership information. All loyalty keys MUST use reverse-domain naming to ensure provenance and prevent collisions when multiple extensions contribute to the shared namespace.",
+      "description": "Key-value map whose keys represent buyer/platform asserted eligibility claims and whose values represent associated membership information. All loyalty keys MUST use reverse-domain naming to ensure provenance and prevent collisions when multiple extensions contribute to the shared namespace.",
       "propertyNames": {
         "$ref": "types/reverse_domain_name.json",
         "description": "Reverse-domain identifier that represents eligibility claim accepted by the Business for this membership. Corresponds to a value from context.eligibility."
       },
       "additionalProperties": {
         "$ref": "#/$defs/loyalty_membership",
-        "description": "Payload that describes the membership information corresponds to the claim.",
+        "description": "Payload that describes the membership information corresponding to the claim.",
         "ucp_request": "omit"
       }
     },
