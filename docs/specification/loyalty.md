@@ -227,9 +227,13 @@ identifier the business would accept as a claim value.
   tier context for the state accepted during the session, and MUST NOT return
   `display_id` until the membership is verified.
 * When a membership claim in the request is accepted but cannot be verified, the business
-  MUST communicate the failure via a recoverable `message` with `type: "error"` and
-  `code: "eligibility_invalid"`. Platforms MAY then choose to remove the membership
-  claim and proceed through checkout without loyalty benefits applied.
+  MAY optionally echoes back the invalid membership via loyalty extension. However, the
+  business MUST communicate the failure via a recoverable `message` with `type: "error"`
+  and `code: "eligibility_invalid"`. It MAY additionally set the error message `path` to
+  reference the relevant membership for better attribution. If invalid membership is
+  returned, the business MUST return `provisional: true` and MUST NOT return `display_id`
+  or `tiers` in this case.  Platforms MAY then choose to remove the membership claim and
+  proceed through checkout without loyalty benefits applied.
 
 At checkout completion, all accepted but unverified loyalty claims MUST be resolved per
 the [Eligibility Verification at Completion](checkout.md#eligibility-verification-at-completion)
@@ -405,10 +409,10 @@ non-provisional and `display_id` is returned.
     }
     ```
 
-If the claim cannot be verified, the business SHOULD return a recoverable error via
-`messages[]`. Businesses MAY set the optional `path` field to reference the membership
-metadata that corresponds to the claim. In this case, the loyalty extension needs to be
-included in the response as well.
+If the claim cannot be verified, the business MUST return a recoverable error via
+`messages[]`  with `code: "eligibility_invalid"`. Businesses MAY set the optional `path`
+field to reference the membership metadata that corresponds to the claim. In this
+case, the loyalty extension needs to be included in the response as well.
 
 === "Request"
 
@@ -432,11 +436,19 @@ included in the response as well.
 
     ```json
     {
+      "loyalty": {
+        "com.example.loyalty.store_card": {
+          "id": "membership_1",
+          "name": "My Loyalty Program",
+          "provisional": true
+        }
+      },
       "messages": [
         {
           "type": "error",
           "severity": "recoverable",
           "code": "eligibility_invalid",
+          "path": "$.loyalty['com.example.loyalty.store_card']",
           "content": "Buyer is not a store card holder."
         }
       ]
