@@ -58,11 +58,11 @@
       "properties": {
         "name": {
           "type": "string",
-          "description": "Human-readable name of the currency (e.g. “LoyaltyStars”)."
+          "description": "Human-readable name of the currency (e.g. 'LoyaltyStars')."
         },
         "code": {
           "type": "string",
-          "description": "Business-specific representation of the currency (e.g. “LST”)."
+          "description": "Business-specific representation of the currency (e.g. 'LST')."
         },
         "decimal_places": {
           "type": "integer",
@@ -100,7 +100,7 @@
         },
         "description": {
           "type": "string",
-          "description": "Detailed complete explanation of the informational benefit (e.g. “Early access to sales”)."
+          "description": "A display-ready, human-readable explanation of this benefit (e.g. 'Early access to sales')."
         }
       }
     },
@@ -115,7 +115,7 @@
         },
         "name": {
           "type": "string",
-          "description": "The human-readable name of the tier (e.g., “Platinum”)."
+          "description": "The human-readable name of the tier (e.g., 'Platinum')."
         },
         "benefits": {
           "type": "array",
@@ -123,35 +123,6 @@
             "$ref": "#/$defs/membership_tier_benefit"
           },
           "description": "List of benefits associated with this tier."
-        }
-      }
-    },
-    "membership_track": {
-      "type": "object",
-      "description": "An enrollment pathway or program category that a user can join independently or simultaneously.",
-      "required": ["id", "name"],
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the membership track."
-        },
-        "name": {
-          "type": "string",
-          "description": "The human-readable name of the track (e.g., “Platinum”)."
-        },
-        "tiers": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/membership_tier"
-          },
-          "description": "List of tiers associated with the membership track."
-        },
-        "reward_currencies": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/reward_currency"
-          },
-          "description": "List of reward currencies associated with the membership track."
         }
       }
     },
